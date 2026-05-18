@@ -9,7 +9,8 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @ToString
 @Builder
 public class Contacts {
@@ -32,6 +33,7 @@ public class Contacts {
     private  String websiteLink;
     private  String linkedLink;
 
+    public String cloudinaryImagePublicId;
 
     @ManyToOne
     private User user;
@@ -39,4 +41,13 @@ public class Contacts {
 
     @OneToMany(mappedBy = "contacts",cascade = CascadeType.ALL,fetch =FetchType.EAGER,orphanRemoval = true)
     private List<SocialLink>links=new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Contacts{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}'; // User ko yahan include mat karna
+    }
 }

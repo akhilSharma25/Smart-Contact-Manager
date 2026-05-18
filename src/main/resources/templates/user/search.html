@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{::script})}">
+<head>
+    <title>Search Contacts | SCM</title>
+</head>
+<body>
+<div id="content">
+    <style>
+        /* 1. Page & Sidebar Layout Container */
+        .search-page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-layout {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        /* 2. Main Content Spacing Fix */
+        .search-content-wrapper {
+            flex-grow: 1;
+            padding-top: 85px;     /* Navbar top gap */
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-left: 260px;    /* Sidebar space */
+            background-color: #f8fafc;
+            padding-bottom: 50px;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .results-title { font-size: 2.2rem; font-weight: 700; color: #1e293b; }
+        .results-count { color: #64748b; font-size: 1rem; margin-top: 5px; font-weight: 500; }
+
+        /* 3. Search Bar UI Container */
+        .search-panel {
+            background: #ffffff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .search-form-inner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .custom-select {
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background-color: #f8fafc;
+            color: #334155;
+            outline: none;
+        }
+
+        .search-input-wrapper { position: relative; }
+        .search-input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        .custom-search-input {
+            padding: 9px 12px 9px 38px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            width: 280px;
+            outline: none;
+        }
+        .custom-search-input:focus { border-color: #4f46e5; }
+
+        .btn-search {
+            background: #1e293b;
+            color: white;
+            padding: 9px 20px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+        .btn-search:hover { background: #0f172a; }
+
+        /* 4. Table UI Core Styling */
+        .table-card-wrapper {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .custom-table th, .custom-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .custom-table thead th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-cell { display: flex; align-items: center; gap: 12px; }
+        .profile-cell img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .cell-main-name { font-weight: 600; color: #1e293b; }
+        .cell-sub-email { color: #64748b; font-size: 0.8rem; }
+
+        .row-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            color: #64748b;
+            transition: color 0.2s;
+            display: inline-block;
+        }
+        .row-icon-btn:hover { color: #1e293b; }
+        .btn-trash-color:hover { color: #dc2626; }
+        .btn-edit-color:hover { color: #2563eb; }
+
+        /* 5. Pagination UI Components */
+        .pagination-list {
+            display: inline-flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .pagination-list a {
+            padding: 10px 18px;
+            text-decoration: none;
+            color: #475569;
+            background: #fff;
+            border-right: 1px solid #e2e8f0;
+            display: block;
+            font-size: 0.875rem;
+        }
+        .pagination-list li:last-child a { border-right: none; }
+        .pagination-list .active-page a { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
+
+        /* Mobile Responsive Fallbacks */
+        @media (max-width: 640px) {
+            .search-content-wrapper { margin-left: 0; padding-top: 75px; }
+            .search-form-inner { flex-direction: column; align-items: stretch; }
+            .custom-search-input { width: 100%; }
+        }
+    </style>
+
+    <div class="search-page-container">
+        <div th:if="${loggedInUser}">
+            <div data-th-replace="~{user/user_navbar :: user-navbar}"></div>
+        </div>
+
+        <div class="main-layout">
+            <div th:if="${loggedInUser}">
+                <div data-th-replace="~{user/sidebar :: sidebar}"></div>
+            </div>
+
+            <div class="search-content-wrapper">
+                <div class="results-header">
+                    <h1 class="results-title">Search Results</h1>
+                    <p class="results-count" th:text="${pageContact != null ? pageContact.totalElements : '0'} + ' contacts found matching your criteria'"></p>
+                </div>
+
+                <div class="search-panel">
+                    <form data-th-action="@{'/user/contacts/search'}"   data-th-object="${contactSearchForm}" method="get">
+                        <div class="search-form-inner">
+                            <select data-th-field="*{field}" name="field" class="custom-select">
+                                <option value="name" th:selected="${param.field != null && param.field[0] == 'name'}">Name</option>
+                                <option value="email" th:selected="${param.field != null && param.field[0] == 'email'}">Email</option>
+                                <option value="phone" th:selected="${param.field != null && param.field[0] == 'phone' || param.field != null && param.field[0] == 'phoneNumber'}">Phone</option>
+                            </select>
+
+                            <div class="search-input-wrapper">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input data-th-field="*{keyword}" th:value="${param.keyword}" name="keyword" type="text" class="custom-search-input" placeholder="Search parameters..." required />
+                            </div>
+
+                            <button type="submit" class="btn-search">Search</button>
+                            <a th:if="${param.keyword}" th:href="@{'/user/contacts'}" class="text-sm text-blue-600 hover:underline" style="margin-left: 8px;">Clear</a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-card-wrapper">
+                    <div data-th-replace="~{message :: messagebox}"></div>
+
+                    <table id="contact-table" th:if="${pageContact != null && pageContact.totalElements > 0}" class="custom-table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Links</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="c : ${pageContact.getContent()}" th:object="${c}">
+                            <td>
+                                <div class="profile-cell">
+                                    <img onerror="this.src='https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png'"
+                                         th:src="*{picture}" alt="Avatar" />
+                                    <div>
+                                        <div class="cell-main-name" th:text="*{name}">Neil Sims</div>
+                                        <div class="cell-sub-email" th:text="*{email}">neil@mail.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span style="display: inline-flex; align-items: center; gap: 8px; color: #334155;">
+                                    <i class="fa-solid fa-phone" style="color: #94a3b8; font-size: 0.85rem;"></i>
+                                    <span th:text="*{phoneNumber}">1234567890</span>
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div th:if="*{favorite}" style="height: 8px; width: 8px; border-radius: 50%; background-color: #22c55e;" title="Favorite"></div>
+                                    <a th:href="*{websiteLink}" target="_blank" style="color: #4f46e5;"><i class="fa-solid fa-link"></i></a>
+                                    <a th:href="@{*{linkedLink}}" target="_blank" style="color: #0a66c2;"><i class="fa-brands fa-linkedin"></i></a>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    <button class="row-icon-btn btn-trash-color" th:onclick="deleteContact([[${c.id}]])" title="Delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <a th:href="@{'/user/contacts/view/'+*{id}}" class="row-icon-btn btn-edit-color" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <button class="row-icon-btn" th:onclick="loadContactdata([[${c.id}]])" title="View Details">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${pageContact != null && pageContact.totalElements > 0}" class="bg-white p-4" style="text-align: center; border-top: 1px solid #f1f5f9;">
+                        <nav aria-label="Search Page Navigation">
+                            <ul class="pagination-list">
+                                <li th:unless="${pageContact.first}">
+                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${pageContact.number-1}, field=${param.field}, keyword=${param.keyword})}">Previous</a>
+                                </li>
+                                <li th:each="index : ${#numbers.sequence(0, pageContact.totalPages-1)}"
+                                    th:classappend="${index == pageContact.number} ? 'active-page' : ''">
+                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${index}, field=${param.field}, keyword=${param.keyword})}" th:text="${index+1}">1</a>
+                                </li>
+                                <li th:unless="${pageContact.last}">
+                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${pageContact.number+1}, field=${param.field}, keyword=${param.keyword})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <h1 class="text-2xl text-center bg-white p-10" th:if="${pageContact == null || pageContact.totalElements <= 0}" style="color: #64748b;">
+                        <i class="fa-solid fa-magnifying-glass" style="display:block; font-size: 3.5rem; margin-bottom: 15px; color: #cbd5e1;"></i>
+                        No matching contacts found. Try adjusting your fields.
+                    </h1>
+                </div>
+            </div>
+        </div>
+        <div data-th-replace="~{user/contact_modals :: contact}"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@linways/table-to-excel@1.0.4/dist/tableToExcel.min.js"></script>
+
+<script th:fragment="script">
+    console.log("Local Script Core Parsed Successfully inside Search Frame");
+
+    const baseURL = "https://www.scm20.site";
+    const viewContactModal = document.getElementById("view_contact_modal");
+
+    const options = {
+        placement: "bottom-right",
+        backdrop: "dynamic",
+        backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40",
+        closable: true,
+        onShow: () => {
+            setTimeout(() => {
+                if(viewContactModal) viewContactModal.classList.add("scale-100");
+            }, 50);
+        }
+    };
+
+    const instanceOptions = { id: "view_contact_modal", override: true };
+
+    let contactModal;
+    if (typeof Modal !== 'undefined' && viewContactModal) {
+        contactModal = new Modal(viewContactModal, options, instanceOptions);
+    }
+
+    function openContactModal() { if(contactModal) contactModal.show(); }
+    function closeContactModal() { if(contactModal) contactModal.hide(); }
+
+    async function loadContactdata(id) {
+        console.log("Analyzing dynamic payloads for key index:", id);
+        try {
+            const response = await fetch(`${baseURL}/api/contacts/${id}`);
+            const data = await response.json();
+
+            document.querySelector("#contact_name").innerHTML = data.name;
+            document.querySelector("#contact_email").innerHTML = data.email;
+            document.querySelector("#contact_image").src = data.picture ? data.picture : 'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png';
+            document.querySelector("#contact_address").innerHTML = data.address;
+            document.querySelector("#contact_phone").innerHTML = data.phoneNumber;
+            document.querySelector("#contact_about").innerHTML = data.description ? data.description : "No descriptive profile listed.";
+
+            const contactFavorite = document.querySelector("#contact_favorite");
+            if (data.favorite) {
+                contactFavorite.innerHTML = "<i class='fas fa-star text-yellow-400'></i> Favorite Profile Check";
+            } else {
+                contactFavorite.innerHTML = "Standard Priority Contact";
+            }
+
+            document.querySelector("#contact_website").href = data.websiteLink;
+            document.querySelector("#contact_website").innerHTML = data.websiteLink ? data.websiteLink : "N/A";
+
+            // FIX: Modal dynamic selectors matched with response variables
+            const linkedInEl = document.querySelector("#contact_linkedIn");
+            if(linkedInEl) {
+                linkedInEl.href = data.linkedLink;
+                linkedInEl.innerHTML = data.linkedLink ? data.linkedLink : "N/A";
+            }
+
+            openContactModal();
+        } catch (error) {
+            console.log("Failed execution compiling target API fields: ", error);
+        }
+    }
+
+    async function deleteContact(id) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: "Are you sure you want to delete this contact?",
+                text: "The records inside the database clusters will be permanently cleared!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#dc2626",
+                cancelButtonColor: "#64748b",
+                confirmButtonText: "Confirm and Delete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.replace(`${baseURL}/user/contacts/delete/` + id);
+                }
+            });
+        } else {
+            if(confirm("Confirm standard fallback alert context to delete this user?")) {
+                window.location.replace(`${baseURL}/user/contacts/delete/` + id);
+            }
+        }
+    }
+</script>
+</body>
+</html>
