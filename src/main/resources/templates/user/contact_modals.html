@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{::script})}">
+<head>
+    <title>Search Contacts | SCM</title>
+</head>
+<body>
+<div th:fragment="contact">
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal-box {
+            width: 100%;
+            max-width: 520px;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 24px 65px rgba(15, 23, 42, 0.16);
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: #111827;
+        }
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            color: #475569;
+            font-size: 1.3rem;
+            cursor: pointer;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .modal-box img {
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 999px;
+            display: block;
+            margin: 0 auto 18px;
+        }
+
+        .modal-item {
+            margin-bottom: 14px;
+            color: #475569;
+            line-height: 1.6;
+        }
+        .modal-item strong {
+            display: inline-block;
+            width: 110px;
+            color: #0f172a;
+        }
+    </style>
+
+    <div id="view_contact_modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="contact_modal_title">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="contact_modal_title">Contact Details</h3>
+                <button class="modal-close-btn" onclick="closeContactModal()">×</button>
+            </div>
+            <img id="contact_image" src="https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png" alt="Contact Image" />
+            <div class="modal-item"><strong>Name:</strong> <span id="contact_name">Loading...</span></div>
+            <div class="modal-item"><strong>Email:</strong> <span id="contact_email">Loading...</span></div>
+            <div class="modal-item"><strong>Phone:</strong> <span id="contact_phone">Loading...</span></div>
+            <div class="modal-item"><strong>Website:</strong> <a id="contact_website" href="#" target="_blank">No website</a></div>
+        </div>
+    </div>
+        <script th:inline="javascript">
+            function openContactModal() {
+                document.getElementById("view_contact_modal").classList.add("open");
+            }
+
+            function closeContactModal() {
+                document.getElementById("view_contact_modal").classList.remove("open");
+            }
+        </script>
+    </div>
+</body>
+</html>

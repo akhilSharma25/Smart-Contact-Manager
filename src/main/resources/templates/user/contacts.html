@@ -146,13 +146,38 @@
             border: none;
             cursor: pointer;
             font-size: 1.1rem;
-            padding: 4px 8px;
+            padding: 8px;
             color: #64748b;
-            transition: color 0.2s;
+            transition: color 0.2s, transform 0.2s;
+            border-radius: 8px;
         }
-        .row-action-btn:hover { color: #1e293b; }
+        .row-action-btn:hover { color: #1e293b; transform: translateY(-1px); }
         .btn-delete:hover { color: #dc2626; }
         .btn-edit:hover { color: #2563eb; }
+
+        .row-actions-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pagination-footer {
+            background: #ffffff;
+            padding: 18px 20px;
+            text-align: center;
+            border-top: 1px solid #f1f5f9;
+            border-radius: 0 0 12px 12px;
+            margin-top: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            background: #ffffff;
+            padding: 48px 24px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            color: #64748b;
+        }
 
         /* 6. Pagination UI */
         .pagination-list {
@@ -160,7 +185,7 @@
             list-style: none;
             padding: 0;
             margin: 0;
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid #e2e8f0;
         }
@@ -184,10 +209,6 @@
     </style>
 
     <div class="view-contacts-container">
-        <div th:if="${loggedInUser}">
-            <div data-th-replace="~{user/user_navbar :: user-navbar}"></div>
-        </div>
-
         <div class="main-layout">
             <div th:if="${loggedInUser}">
                 <div data-th-replace="~{user/sidebar :: sidebar}"></div>
@@ -260,20 +281,20 @@
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <div th:if="*{favorite}" style="height: 8px; width: 8px; border-radius: 50%; background-color: #22c55e;" title="Favorite"></div>
                                     <a th:href="*{websiteLink}" target="_blank" style="color: #4f46e5;"><i class="fa-solid fa-link"></i></a>
-                                    <a th:href="@{*{linkedLink}}" target="_blank">
+                                    <a th:href="*{linkedLink}" target="_blank">
                                         <i class="fa-brands w-6 h-6 fa-linkedin"></i>
                                     </a>
                                 </div>
                             </td>
                             <td>
-                                <div style="display: flex; gap: 5px;">
-                                    <button class="row-action-btn btn-delete" th:onclick="deleteContact([[${c.id}]])" title="Delete">
+                                <div class="row-actions-group">
+                                    <button class="row-action-btn btn-delete" type="button" th:data-contact-id="${c.id}" onclick="deleteContact(this.dataset.contactId)" title="Delete">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
-                                    <a th:href="@{'/user/contacts/view/'+*{id}}" class="row-action-btn btn-edit" title="Edit">
+                                    <a th:href="@{/user/contacts/view/{id}(id=${c.id})}" class="row-action-btn btn-edit" title="Edit">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <button class="row-action-btn" th:onclick="loadContactdata([[${c.id}]])" title="View Details">
+                                    <button class="row-action-btn" type="button" th:data-contact-id="${c.id}" onclick="loadContactdata(this.dataset.contactId)" title="View Details">
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
                                 </div>
@@ -282,27 +303,36 @@
                         </tbody>
                     </table>
 
-                    <div th:if="${pageContact.totalElements > 0}" class="bg-white p-4" style="text-align: center; border-top: 1px solid #f1f5f9;">
+                    <div th:if="${pageContact.totalElements > 0}" class="pagination-footer"
+                         th:with="prevPage=${pageContact.number - 1}, nextPage=${pageContact.number + 1}">
                         <nav th:aria-label="Pagination">
                             <ul class="pagination-list">
                                 <li th:unless="${pageContact.first}">
-                                    <a th:href="${param.keyword} ? @{'/user/contacts/search'(field=${param.field}, keyword=${param.keyword}, size=${pageSize}, page=${pageContact.number-1})} : @{'/user/contacts'(size=${pageSize}, page=${pageContact.number-1})}">Previous</a>
+                                    <a th:if="${param.keyword != null}" th:href="@{/user/contacts/search(field=${param.field}, keyword=${param.keyword}, size=${pageSize}, page=${prevPage})}">Previous</a>
+                                    <a th:unless="${param.keyword != null}" th:href="@{/user/contacts(size=${pageSize}, page=${prevPage})}">Previous</a>
                                 </li>
-                                <li th:each="index : ${#numbers.sequence(0, pageContact.totalPages-1)}"
+                                <li th:each="index : ${#numbers.sequence(0, pageContact.totalPages - 1)}"
                                     th:classappend="${index == pageContact.number} ? 'active-page' : ''">
-                                    <a th:href="${param.keyword} ? @{'/user/contacts/search'(field=${param.field}, keyword=${param.keyword}, size=${pageSize}, page=${index})} : @{'/user/contacts'(size=${pageSize}, page=${index})}" th:text="${index+1}">1</a>
+                                    <a th:if="${param.keyword != null}"
+                                       th:href="@{/user/contacts/search(field=${param.field}, keyword=${param.keyword}, size=${pageSize}, page=${index})}"
+                                       th:text="${index + 1}">1</a>
+                                    <a th:unless="${param.keyword != null}"
+                                       th:href="@{/user/contacts(size=${pageSize}, page=${index})}"
+                                       th:text="${index + 1}">1</a>
                                 </li>
                                 <li th:unless="${pageContact.last}">
-                                    <a th:href="${param.keyword} ? @{'/user/contacts/search'(field=${param.field}, keyword=${param.keyword}, size=${pageSize}, page=${pageContact.number+1})} : @{'/user/contacts'(size=${pageSize}, page=${pageContact.number+1})}">Next</a>
+                                    <a th:if="${param.keyword != null}" th:href="@{/user/contacts/search(field=${param.field}, keyword=${param.keyword}, size=${pageSize}, page=${nextPage})}">Next</a>
+                                    <a th:unless="${param.keyword != null}" th:href="@{/user/contacts(size=${pageSize}, page=${nextPage})}">Next</a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
 
-                    <h1 class="text-2xl text-center bg-white p-8" th:if="${pageContact.totalElements <= 0}" style="color: #64748b;">
+                    <div class="empty-state" th:if="${pageContact.totalElements <= 0}">
                         <i class="fa-solid fa-folder-open" style="display:block; font-size: 3rem; margin-bottom: 15px; color: #cbd5e1;"></i>
-                        No Contacts Found
-                    </h1>
+                        <h2 style="font-size: 1.3rem; margin-bottom: 8px;">No Contacts Found</h2>
+                        <p>Try changing your search or add a new contact.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -312,88 +342,48 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@linways/table-to-excel@1.0.4/dist/tableToExcel.min.js"></script>
 
-<script th:fragment="script">
-    console.log("Contacts.js Script Loaded Locally Inside Page");
-
-    const baseURL = "https://www.scm20.site";
-    const viewContactModal = document.getElementById("view_contact_modal");
-
-    const options = {
-        placement: "bottom-right",
-        backdrop: "dynamic",
-        backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40",
-        closable: true,
-        onHide: () => { console.log("Modal status: Hidden"); },
-        onShow: () => {
-            setTimeout(() => {
-                if(viewContactModal) viewContactModal.classList.add("scale-100");
-            }, 50);
-        }
-    };
-
-    const instanceOptions = { id: "view_contact_modal", override: true };
-
-    let contactModal;
-    if (typeof Modal !== 'undefined' && viewContactModal) {
-        contactModal = new Modal(viewContactModal, options, instanceOptions);
-    }
-
-    function openContactModal() { if(contactModal) contactModal.show(); }
-    function closeContactModal() { if(contactModal) contactModal.hide(); }
-
+<script th:fragment="script" th:inline="javascript">
     async function loadContactdata(id) {
-        console.log("Fetching details for ID:", id);
         try {
-            const response = await fetch(`${baseURL}/api/contacts/${id}`);
+            const response = await fetch(`/user/contacts/modal/${id}`);
+            if (!response.ok) {
+                console.warn(`Contact load failed with status ${response.status}`);
+                return;
+            }
             const data = await response.json();
 
-            document.querySelector("#contact_name").innerHTML = data.name;
-            document.querySelector("#contact_email").innerHTML = data.email;
-            document.querySelector("#contact_image").src = data.picture ? data.picture : 'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png';
-            document.querySelector("#contact_address").innerHTML = data.address;
-            document.querySelector("#contact_phone").innerHTML = data.phoneNumber;
-            document.querySelector("#contact_about").innerHTML = data.description ? data.description : "No description provided.";
-
-            const contactFavorite = document.querySelector("#contact_favorite");
-            if (data.favorite) {
-                contactFavorite.innerHTML = "<i class='fas fa-star text-yellow-400'></i> Favorite Contact";
-            } else {
-                contactFavorite.innerHTML = "Regular Contact";
-            }
-
-            document.querySelector("#contact_website").href = data.websiteLink;
-            document.querySelector("#contact_website").innerHTML = data.websiteLink ? data.websiteLink : "N/A";
-
-            const linkedInEl = document.querySelector("#contact_linkedIn");
-            if(linkedInEl) {
-                linkedInEl.href = data.linkedLink;
-                linkedInEl.innerHTML = data.linkedLink ? data.linkedLink : "N/A";
-            }
+            document.querySelector("#contact_name").innerText = data.name || "N/A";
+            document.querySelector("#contact_email").innerText = data.email || "N/A";
+            document.querySelector("#contact_phone").innerText = data.phoneNumber || "N/A";
+            document.querySelector("#contact_website").href = data.websiteLink || "#";
+            document.querySelector("#contact_website").innerText = data.websiteLink ? "Open Website" : "No website";
+            document.querySelector("#contact_image").src = data.picture || 'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png';
 
             openContactModal();
         } catch (error) {
-            console.log("Error loading dynamic contact via API context: ", error);
+            console.error("Error loading contact:", error);
         }
     }
 
     async function deleteContact(id) {
+        event.preventDefault();
+        event.stopPropagation();
         if (typeof Swal !== 'undefined') {
             Swal.fire({
-                title: "Do you want to delete this contact?",
-                text: "You won't be able to revert this operation!",
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#dc2626",
-                cancelButtonColor: "#64748b",
                 confirmButtonText: "Yes, delete it!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.replace(`${baseURL}/user/contacts/delete/` + id);
+                    window.location.href = `/user/contacts/delete/${id}`;
                 }
             });
         } else {
-            if(confirm("Are you sure you want to delete this contact?")) {
-                window.location.replace(`${baseURL}/user/contacts/delete/` + id);
+            if(confirm("Are you sure?")) {
+                window.location.href = `/user/contacts/delete/${id}`;
             }
         }
     }

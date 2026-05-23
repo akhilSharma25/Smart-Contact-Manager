@@ -22,8 +22,8 @@
     <section class="hero">
         <div class="container">
             <h2>Manage Contacts Smarter</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Secure, Fast, and Modern Contact Management for everyone.</p>
-            <a href="#" class="btn-white">Get Started Now</a>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Secure, fast, and modern contact management designed for real teams.</p>
+            <a th:href="${loggedInUser != null} ? @{/user/contacts} : @{/login}" class="btn-white">Get Started Now</a>
         </div>
     </section>
 

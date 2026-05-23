@@ -1,5 +1,6 @@
 package com.scm.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +37,7 @@ public class Contacts {
     public String cloudinaryImagePublicId;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
 

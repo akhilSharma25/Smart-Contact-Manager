@@ -20,10 +20,10 @@ public interface ContactService {
     List<Contacts> search(String name,String email,String phoneNumber);
 
     List<Contacts> getByUserId(String userId);
-    Page<Contacts> getByUser(User user,int page,int size,String sortBy);
+    Page<Contacts> getByUser(User user,int page,int size,String sortBy,String direction);
 
-    Page<Contacts> searchByName(String nameKeyword,int page,int size,String sortBy,User user);
-    Page<Contacts> searchByEmail(String emailKeyword,int page,int size,String sortBy,User user);
-    Page<Contacts> searchByPhone(String phoneKeyword,int page,int size,String sortBy,User user);
+    Page<Contacts> searchByName(String nameKeyword,int page,int size,String sortBy,String direction,User user);
+    Page<Contacts> searchByEmail(String emailKeyword,int page,int size,String sortBy,String direction,User user);
+    Page<Contacts> searchByPhone(String phoneKeyword,int page,int size,String sortBy,String direction,User user);
 
 }

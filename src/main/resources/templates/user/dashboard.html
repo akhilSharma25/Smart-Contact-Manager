@@ -51,10 +51,6 @@
 
     <div class="dashboard-wrapper">
         <!-- 1. NAVBAR YAHAN AAYEGI (Ye missing thi) -->
-        <div th:if="${loggedInUser}">
-            <div data-th-replace="~{user/user_navbar :: user-navbar}"></div>
-        </div>
-
         <div class="main-layout">
             <!-- 2. SIDEBAR -->
             <div th:if="${loggedInUser}">

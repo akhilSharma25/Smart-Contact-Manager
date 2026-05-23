@@ -87,11 +87,6 @@
     </style>
 
     <div class="profile-page-container">
-        <!-- 1. Navbar Include (Missing part) -->
-        <div th:if="${loggedInUser}">
-            <div data-th-replace="~{user/user_navbar :: user-navbar}"></div>
-        </div>
-
         <div class="main-layout">
             <!-- 2. Sidebar Include -->
             <div th:if="${loggedInUser}">

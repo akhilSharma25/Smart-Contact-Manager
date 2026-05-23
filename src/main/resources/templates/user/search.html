@@ -6,11 +6,11 @@
 <body>
 <div id="content">
     <style>
-        /* 1. Page & Sidebar Layout Container */
         .search-page-container {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            background: #f8fafc;
         }
 
         .main-layout {
@@ -18,52 +18,59 @@
             flex-grow: 1;
         }
 
-        /* 2. Main Content Spacing Fix */
         .search-content-wrapper {
             flex-grow: 1;
-            padding-top: 85px;     /* Navbar top gap */
-            padding-left: 20px;
-            padding-right: 20px;
-            margin-left: 260px;    /* Sidebar space */
-            background-color: #f8fafc;
-            padding-bottom: 50px;
+            padding: 85px 20px 40px;
+            margin-left: 260px;
         }
 
         .results-header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
-        .results-title { font-size: 2.2rem; font-weight: 700; color: #1e293b; }
-        .results-count { color: #64748b; font-size: 1rem; margin-top: 5px; font-weight: 500; }
+        .results-title {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        .results-count {
+            color: #475569;
+            font-size: 1rem;
+            font-weight: 500;
+        }
 
-        /* 3. Search Bar UI Container */
         .search-panel {
             background: #ffffff;
-            padding: 15px 20px;
-            border-radius: 12px;
+            padding: 22px 24px;
+            border-radius: 16px;
             border: 1px solid #e2e8f0;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 24px;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.06);
         }
 
         .search-form-inner {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             flex-wrap: wrap;
         }
 
-        .custom-select {
-            padding: 9px 12px;
+        .custom-select,
+        .custom-search-input {
             border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            background-color: #f8fafc;
-            color: #334155;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            padding: 12px 14px;
             outline: none;
+            color: #334155;
+            background: #f8fafc;
         }
 
-        .search-input-wrapper { position: relative; }
+        .custom-select { min-width: 170px; }
+        .custom-search-input { width: 100%; max-width: 340px; padding-left: 40px; }
+
+        .search-input-wrapper { position: relative; width: 100%; max-width: 340px; }
         .search-input-wrapper i {
             position: absolute;
             left: 14px;
@@ -71,85 +78,78 @@
             transform: translateY(-50%);
             color: #94a3b8;
         }
-        .custom-search-input {
-            padding: 9px 12px 9px 38px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            width: 280px;
-            outline: none;
-        }
-        .custom-search-input:focus { border-color: #4f46e5; }
+
+        .custom-search-input:focus { border-color: #4f46e5; background: #ffffff; }
 
         .btn-search {
             background: #1e293b;
             color: white;
-            padding: 9px 20px;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
             border: none;
-            transition: background 0.2s;
+            transition: background 0.2s ease;
         }
-        .btn-search:hover { background: #0f172a; }
+        .btn-search:hover { background: #111827; }
 
-        /* 4. Table UI Core Styling */
         .table-card-wrapper {
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 16px;
             border: 1px solid #e2e8f0;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.06);
         }
 
         .custom-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
-        .custom-table th, .custom-table td {
-            padding: 14px 20px;
+        .custom-table th,
+        .custom-table td {
+            padding: 16px 20px;
             border-bottom: 1px solid #f1f5f9;
         }
 
         .custom-table thead th {
             background-color: #f8fafc;
             color: #475569;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
         }
 
         .profile-cell { display: flex; align-items: center; gap: 12px; }
-        .profile-cell img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .cell-main-name { font-weight: 600; color: #1e293b; }
-        .cell-sub-email { color: #64748b; font-size: 0.8rem; }
+        .profile-cell img { width: 42px; height: 42px; border-radius: 999px; object-fit: cover; }
+        .cell-main-name { font-weight: 600; color: #0f172a; }
+        .cell-sub-email { color: #64748b; font-size: 0.82rem; }
 
         .row-icon-btn {
             background: none;
             border: none;
             cursor: pointer;
             font-size: 1.1rem;
-            padding: 4px 8px;
+            padding: 8px;
             color: #64748b;
-            transition: color 0.2s;
+            transition: color 0.2s ease, transform 0.2s ease;
             display: inline-block;
+            border-radius: 10px;
         }
-        .row-icon-btn:hover { color: #1e293b; }
+        .row-icon-btn:hover { color: #1e293b; transform: translateY(-1px); }
         .btn-trash-color:hover { color: #dc2626; }
         .btn-edit-color:hover { color: #2563eb; }
 
-        /* 5. Pagination UI Components */
         .pagination-list {
             display: inline-flex;
             list-style: none;
             padding: 0;
             margin: 0;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             border: 1px solid #e2e8f0;
         }
@@ -157,27 +157,23 @@
             padding: 10px 18px;
             text-decoration: none;
             color: #475569;
-            background: #fff;
+            background: #ffffff;
             border-right: 1px solid #e2e8f0;
             display: block;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
         }
         .pagination-list li:last-child a { border-right: none; }
-        .pagination-list .active-page a { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
+        .pagination-list .active-page a { background-color: #eff6ff; color: #2563eb; font-weight: 700; }
 
-        /* Mobile Responsive Fallbacks */
-        @media (max-width: 640px) {
+        @media (max-width: 900px) {
             .search-content-wrapper { margin-left: 0; padding-top: 75px; }
             .search-form-inner { flex-direction: column; align-items: stretch; }
-            .custom-search-input { width: 100%; }
+            .custom-select, .search-input-wrapper, .btn-search { width: 100%; }
+            .custom-search-input { max-width: 100%; }
         }
     </style>
 
     <div class="search-page-container">
-        <div th:if="${loggedInUser}">
-            <div data-th-replace="~{user/user_navbar :: user-navbar}"></div>
-        </div>
-
         <div class="main-layout">
             <div th:if="${loggedInUser}">
                 <div data-th-replace="~{user/sidebar :: sidebar}"></div>
@@ -243,18 +239,18 @@
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <div th:if="*{favorite}" style="height: 8px; width: 8px; border-radius: 50%; background-color: #22c55e;" title="Favorite"></div>
                                     <a th:href="*{websiteLink}" target="_blank" style="color: #4f46e5;"><i class="fa-solid fa-link"></i></a>
-                                    <a th:href="@{*{linkedLink}}" target="_blank" style="color: #0a66c2;"><i class="fa-brands fa-linkedin"></i></a>
+                                    <a th:href="*{linkedLink}" target="_blank" style="color: #0a66c2;"><i class="fa-brands fa-linkedin"></i></a>
                                 </div>
                             </td>
                             <td>
                                 <div style="display: flex; gap: 5px; align-items: center;">
-                                    <button class="row-icon-btn btn-trash-color" th:onclick="deleteContact([[${c.id}]])" title="Delete">
+                                    <button class="row-icon-btn btn-trash-color" type="button" th:data-contact-id="${c.id}" onclick="deleteContact(this.dataset.contactId)" title="Delete">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
-                                    <a th:href="@{'/user/contacts/view/'+*{id}}" class="row-icon-btn btn-edit-color" title="Edit">
+                                    <a th:href="@{/user/contacts/view/{id}(id=${c.id})}" class="row-icon-btn btn-edit-color" title="Edit">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <button class="row-icon-btn" th:onclick="loadContactdata([[${c.id}]])" title="View Details">
+                                    <button class="row-icon-btn" type="button" th:data-contact-id="${c.id}" onclick="loadContactdata(this.dataset.contactId)" title="View Details">
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
                                 </div>
@@ -267,14 +263,14 @@
                         <nav aria-label="Search Page Navigation">
                             <ul class="pagination-list">
                                 <li th:unless="${pageContact.first}">
-                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${pageContact.number-1}, field=${param.field}, keyword=${param.keyword})}">Previous</a>
+                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${pageContact.number - 1}, field=${param.field}, keyword=${param.keyword})}">Previous</a>
                                 </li>
-                                <li th:each="index : ${#numbers.sequence(0, pageContact.totalPages-1)}"
+                                <li th:each="index : ${#numbers.sequence(0, pageContact.totalPages - 1)}"
                                     th:classappend="${index == pageContact.number} ? 'active-page' : ''">
-                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${index}, field=${param.field}, keyword=${param.keyword})}" th:text="${index+1}">1</a>
+                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${index}, field=${param.field}, keyword=${param.keyword})}" th:text="${index + 1}">1</a>
                                 </li>
                                 <li th:unless="${pageContact.last}">
-                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${pageContact.number+1}, field=${param.field}, keyword=${param.keyword})}">Next</a>
+                                    <a th:href="@{'/user/contacts/search'(size=${pageSize}, page=${pageContact.number + 1}, field=${param.field}, keyword=${param.keyword})}">Next</a>
                                 </li>
                             </ul>
                         </nav>
@@ -296,7 +292,6 @@
 <script th:fragment="script">
     console.log("Local Script Core Parsed Successfully inside Search Frame");
 
-    const baseURL = "https://www.scm20.site";
     const viewContactModal = document.getElementById("view_contact_modal");
 
     const options = {
@@ -324,7 +319,7 @@
     async function loadContactdata(id) {
         console.log("Analyzing dynamic payloads for key index:", id);
         try {
-            const response = await fetch(`${baseURL}/api/contacts/${id}`);
+            const response = await fetch(`/api/contacts/${id}`);
             const data = await response.json();
 
             document.querySelector("#contact_name").innerHTML = data.name;
@@ -369,12 +364,12 @@
                 confirmButtonText: "Confirm and Delete"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.replace(`${baseURL}/user/contacts/delete/` + id);
+                    window.location.replace(`/user/contacts/delete/` + id);
                 }
             });
         } else {
             if(confirm("Confirm standard fallback alert context to delete this user?")) {
-                window.location.replace(`${baseURL}/user/contacts/delete/` + id);
+                window.location.replace(`/user/contacts/delete/` + id);
             }
         }
     }

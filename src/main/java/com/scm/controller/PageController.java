@@ -4,9 +4,11 @@ import com.scm.forms.UserForm;
 import com.scm.helper.Message;
 import com.scm.helper.MessageType;
 import com.scm.model.User;
+import com.scm.repo.UserRepo;
 import com.scm.services.impl.UserServiceIml;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,18 +22,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class PageController {
     @Autowired
     private UserServiceIml serviceIml;
+    @Autowired
+    private UserRepo repo;
 
     @GetMapping("/")
     public String index() {
         return "redirect:/home";
     }
     @GetMapping("/home")
-    public  String home(Model model){
+    public  String home(Model model, Authentication authentication){
         model.addAttribute("name","Substring Technologies");
         model.addAttribute("city","Delhi");
+        
+        // Pass actual logged-in user status
+        boolean isLoggedIn = authentication != null && authentication.isAuthenticated();
+        if (authentication != null && authentication.isAuthenticated()) {
 
-        model.addAttribute("loggedInUser", false);
-        return "home";
+            String username = authentication.getName();
+            // Database se pura User object dhoondho
+            User user = repo.findByEmail(username).orElse(null);
+            model.addAttribute("loggedInUser", user);
+        } else {
+            model.addAttribute("loggedInUser", null);
+        }        return "home";
     }
 
     @RequestMapping("/about")

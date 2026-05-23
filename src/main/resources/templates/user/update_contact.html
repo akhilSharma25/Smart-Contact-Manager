@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{::script})}">
+<head>
+    <title>Update Contact</title>
+    <style>
+        /* Modern Clean Styles */
+        .scm-update-wrapper {
+            font-family: 'Inter', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 90px 20px 40px 20px;
+            margin-left: 260px;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        .scm-card {
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 620px;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .scm-card h1 { text-align: center; color: #0f172a; margin-bottom: 22px; font-size: 1.95rem; }
+        .scm-form { display: grid; gap: 18px; }
+        .scm-group { display: grid; gap: 6px; }
+        .scm-group label { font-weight: 700; color: #475569; font-size: 0.86rem; text-transform: uppercase; letter-spacing: 0.03em; }
+        .scm-group input[type="text"], .scm-group textarea, .scm-group input[type="file"] {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background: #f8fafc;
+            font-size: 0.95rem;
+            color: #1f2937;
+            transition: border-color 0.2s ease;
+        }
+        .scm-group input[type="text"]:focus,
+        .scm-group textarea:focus,
+        .scm-group input[type="file"]:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: #ffffff;
+        }
+        .scm-group textarea { min-height: 110px; resize: vertical; }
+        .scm-checkbox-row { display: flex; align-items: center; gap: 12px; }
+        .scm-checkbox-row input { width: auto; }
+        .scm-btn-group { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+        .scm-btn { flex: 1; padding: 14px 16px; border: none; border-radius: 12px; cursor: pointer; color: white; font-weight: 700; font-size: 0.95rem; }
+        .scm-btn-update { background: #111827; }
+        .scm-btn-reset { background: #64748b; }
+        .scm-preview {
+            max-width: 180px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: block;
+            margin: 10px auto;
+            border-radius: 18px;
+            border: 1px solid #d6d3d1;
+            object-fit: cover;
+            background: #f8fafc;
+        }
+
+        @media (max-width: 900px) {
+            .scm-update-wrapper { margin-left: 0; padding-top: 75px; }
+            .scm-card { padding: 24px; }
+            .scm-btn-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div id="content">
+    <div class="scm-update-wrapper">
+        <div class="scm-card">
+            <h1>Update Contact</h1>
+            <form class="scm-form"
+                  th:action="@{/user/contacts/update/{id}(id=${contactId})}"
+                  th:object="${contactForm}"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <div class="scm-group">
+                    <label>Contact Name</label>
+                    <input type="text" th:field="*{name}" />
+                </div>
+                <div class="scm-group">
+                    <label>Contact Email</label>
+                    <input type="text" th:field="*{email}" />
+                </div>
+                <div class="scm-group">
+                    <label>Contact Phone</label>
+                    <input type="text" th:field="*{phoneNumber}" />
+                </div>
+                <div class="scm-group">
+                    <label>Address</label>
+                    <textarea th:field="*{address}" rows="3"></textarea>
+                </div>
+                <div class="scm-group">
+                    <label>Description</label>
+                    <textarea th:field="*{description}" rows="3"></textarea>
+                </div>
+                <div class="scm-group">
+                    <label>Website Link</label>
+                    <input type="text" th:field="*{websiteLink}" />
+                </div>
+                <div class="scm-group">
+                    <label>LinkedIn Link</label>
+                    <input type="text" th:field="*{linkedInLink}" />
+                </div>
+                <div class="scm-group">
+                    <label>Image</label>
+                    <input type="file" id="image_file_input" th:field="*{contactImage}" />
+                    <img th:if="*{picture} and *{picture != ''}" th:src="*{picture}" id="upload_image_preview" class="scm-preview" />
+                    <img th:unless="*{picture} and *{picture != ''}" src="https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png" id="upload_image_preview" class="scm-preview" />
+                </div>
+                <div class="scm-group">
+                    <input type="checkbox" th:field="*{favorite}" />
+                    <label style="display:inline;">Is favorite?</label>
+                </div>
+                <div class="scm-btn-group">
+                    <button type="submit" class="scm-btn scm-btn-update">Update</button>
+                    <button type="reset" class="scm-btn scm-btn-reset">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:fragment="script">
+    document.getElementById('image_file_input').addEventListener('change', function(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            document.getElementById('upload_image_preview').src = reader.result;
+        }
+        if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
+    });
+</script>
+</body>
+</html>
