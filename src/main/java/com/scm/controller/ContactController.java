@@ -57,6 +57,10 @@ private ContactService service;
     @PostMapping("/add")
     public String saveContact(@Valid @ModelAttribute ContactForm contactForm, BindingResult bindingResult, Authentication authentication, HttpSession session,Model model){
 
+        if (contactForm.getContactImage() == null || contactForm.getContactImage().isEmpty()) {
+            bindingResult.rejectValue("contactImage", "contactImage", "Please upload a profile image");
+        }
+
         if(bindingResult.hasErrors()){
             return "user/add_contact";
         }
@@ -75,8 +79,8 @@ private ContactService service;
         contacts.setDescription(contactForm.getDescription());
         contacts.setPhoneNumber(contactForm.getPhoneNumber());
         contacts.setUser(user.get());
-        contacts.setWebsiteLink(contactForm.getWebsiteLink());
-        contacts.setLinkedLink(contactForm.getLinkedInLink());
+        contacts.setWebsiteLink(Helper.normalizeUrl(contactForm.getWebsiteLink()));
+        contacts.setLinkedLink(Helper.normalizeUrl(contactForm.getLinkedInLink()));
         contacts.setPicture(fileUrl);
         System.out.println(contacts);
         service.save(contacts);
@@ -229,6 +233,7 @@ private ContactService service;
                                 @Valid @ModelAttribute ContactForm contactForm,
                                 BindingResult bindingResult,
                                 Authentication authentication,
+                                HttpSession session,
                                 Model model) {
 
         if (bindingResult.hasErrors()) {
@@ -250,8 +255,8 @@ private ContactService service;
         con.setAddress(contactForm.getAddress());
         con.setDescription(contactForm.getDescription());
         con.setFavorite(contactForm.isFavorite());
-        con.setWebsiteLink(contactForm.getWebsiteLink());
-        con.setLinkedLink(contactForm.getLinkedInLink());
+        con.setWebsiteLink(Helper.normalizeUrl(contactForm.getWebsiteLink()));
+        con.setLinkedLink(Helper.normalizeUrl(contactForm.getLinkedInLink()));
 
         if (contactForm.getContactImage() != null && !contactForm.getContactImage().isEmpty()) {
             String fileName = UUID.randomUUID().toString();
@@ -264,8 +269,12 @@ private ContactService service;
         }
 
         service.update(con);
-        model.addAttribute("message", Message.builder().content("Contact Updated !!").type(MessageType.green).build());
+        session.setAttribute("message",
+                Message.builder()
+                        .content("Contact Updated Successfully")
+                        .type(MessageType.green)
+                        .build());
 
-        return "redirect:/user/contacts/view/" + contactId;
+        return "redirect:/user/contacts";
     }
 }

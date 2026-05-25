@@ -280,10 +280,23 @@
                             <td>
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <div th:if="*{favorite}" style="height: 8px; width: 8px; border-radius: 50%; background-color: #22c55e;" title="Favorite"></div>
-                                    <a th:href="*{websiteLink}" target="_blank" style="color: #4f46e5;"><i class="fa-solid fa-link"></i></a>
-                                    <a th:href="*{linkedLink}" target="_blank">
+                                    <a th:if="${c.websiteLink != null && !#strings.isEmpty(c.websiteLink)}"
+                                       th:href="${#strings.startsWith(c.websiteLink, 'http://') or #strings.startsWith(c.websiteLink, 'https://') ? c.websiteLink : 'https://' + c.websiteLink}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       style="color: #4f46e5;"
+                                       title="Open website">
+                                        <i class="fa-solid fa-link"></i>
+                                    </a>
+                                    <span th:if="${c.websiteLink == null || #strings.isEmpty(c.websiteLink)}" style="color: #94a3b8; font-size: 0.9rem;">No website</span>
+                                    <a th:if="${c.linkedLink != null && !#strings.isEmpty(c.linkedLink)}"
+                                       th:href="${#strings.startsWith(c.linkedLink, 'http://') or #strings.startsWith(c.linkedLink, 'https://') ? c.linkedLink : 'https://' + c.linkedLink}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       title="Open LinkedIn">
                                         <i class="fa-brands w-6 h-6 fa-linkedin"></i>
                                     </a>
+                                    <span th:if="${c.linkedLink == null || #strings.isEmpty(c.linkedLink)}" style="color: #94a3b8; font-size: 0.9rem;">No LinkedIn</span>
                                 </div>
                             </td>
                             <td>
@@ -355,8 +368,11 @@
             document.querySelector("#contact_name").innerText = data.name || "N/A";
             document.querySelector("#contact_email").innerText = data.email || "N/A";
             document.querySelector("#contact_phone").innerText = data.phoneNumber || "N/A";
-            document.querySelector("#contact_website").href = data.websiteLink || "#";
-            document.querySelector("#contact_website").innerText = data.websiteLink ? "Open Website" : "No website";
+            document.querySelector("#contact_address").innerText = data.address || "No address added";
+            document.querySelector("#contact_description").innerText = data.description || "No description added";
+            setLinkElement(document.querySelector("#contact_website"), data.websiteLink, "No website");
+            setLinkElement(document.querySelector("#contact_linkedin"), data.linkedLink, "No LinkedIn link");
+            setFavoriteBadge(Boolean(data.favorite));
             document.querySelector("#contact_image").src = data.picture || 'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png';
 
             openContactModal();

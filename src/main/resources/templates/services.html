@@ -7,36 +7,179 @@
 
 <div id="content">
     <style>
-        .services-wrapper {
-            padding: 40px 20px;
-            max-width: 800px;
+        .services-shell {
+            padding: 32px 20px 56px;
+        }
+
+        .services-hero {
+            max-width: 1100px;
             margin: 0 auto;
-            line-height: 1.6;
+            padding: 46px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #0f172a 0%, #111827 45%, #1d4ed8 100%);
+            color: #ffffff;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
         }
-        .services-wrapper h1 {
-            color: #1e293b;
+
+        .services-hero .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .services-hero h1 {
+            margin: 0 0 12px;
             font-size: 2.5rem;
-            margin-bottom: 10px;
+            line-height: 1.15;
         }
-        .services-wrapper h2 {
-            color: #4f46e5;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+
+        .services-hero p {
+            margin: 0;
+            max-width: 780px;
+            color: rgba(255, 255, 255, 0.88);
+            line-height: 1.8;
+            font-size: 1.05rem;
         }
-        .services-wrapper p {
-            color: #64748b;
-            font-size: 1.1rem;
+
+        .services-grid {
+            max-width: 1100px;
+            margin: 26px auto 0;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .service-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+        }
+
+        .service-card .icon {
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: #dbeafe;
+            font-size: 1.3rem;
+            margin-bottom: 14px;
+        }
+
+        .service-card h3 {
+            margin: 0 0 10px;
+            color: #0f172a;
+            font-size: 1.2rem;
+        }
+
+        .service-card p {
+            margin: 0;
+            color: #475569;
+            line-height: 1.75;
+        }
+
+        .service-highlights {
+            max-width: 1100px;
+            margin: 24px auto 0;
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 18px;
+        }
+
+        .highlight-panel {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(191, 219, 254, 0.8);
+        }
+
+        .highlight-panel h2 {
+            margin: 0 0 10px;
+            color: #0f172a;
+            font-size: 1.35rem;
+        }
+
+        .highlight-panel p {
+            margin: 0;
+            line-height: 1.8;
+            color: #334155;
+        }
+
+        .benefit-list {
+            margin: 14px 0 0;
+            padding-left: 18px;
+            color: #334155;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 900px) {
+            .services-grid,
+            .service-highlights {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 
-    <div class="services-wrapper">
-        <h1>Welcome to services page</h1>
-        <h2>Services offered by SCM</h2>
-        <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas dolore assumenda rerum
-            harum mollitia incidunt nesciunt dignissimos esse dicta reprehenderit quam,
-            quisquam aspernatur enim consequatur accusamus, minima alias odit ducimus.
-        </p>
+    <div class="services-shell">
+        <section class="services-hero">
+            <div class="eyebrow">Services</div>
+            <h1>Everything your team needs to manage contacts, follow-ups, and customer information effectively.</h1>
+            <p>
+                SCM 2.0 is built to help businesses simplify contact management without adding extra complexity.
+                Whether you are running a sales team, customer support desk, or agency workflow, our platform keeps
+                all important contact information organized, searchable, and ready for action.
+            </p>
+        </section>
+
+        <div class="services-grid">
+            <article class="service-card">
+                <div class="icon">📇</div>
+                <h3>Contact Management</h3>
+                <p>Store and organize contact details, business information, and profile updates in a single secure dashboard.</p>
+            </article>
+
+            <article class="service-card">
+                <div class="icon">🔎</div>
+                <h3>Smart Search</h3>
+                <p>Find the right contact instantly using names, emails, phone numbers, or custom filters.</p>
+            </article>
+
+            <article class="service-card">
+                <div class="icon">📈</div>
+                <h3>Team Visibility</h3>
+                <p>Give your team a shared, reliable view of customer data so everyone stays aligned and productive.</p>
+            </article>
+        </div>
+
+        <div class="service-highlights">
+            <section class="highlight-panel">
+                <h2>Built for modern business teams</h2>
+                <p>
+                    SCM 2.0 helps businesses improve their daily operations by reducing manual effort, keeping
+                    records updated, and making customer information easier to access across the team.
+                </p>
+            </section>
+
+            <section class="highlight-panel">
+                <h2>What you get with SCM 2.0</h2>
+                <ul class="benefit-list">
+                    <li>Clean and easy-to-use contact dashboard</li>
+                    <li>Fast access to customer data for sales, support, and admin teams</li>
+                    <li>Reliable workflow for updating and managing contact records</li>
+                    <li>Scalable structure for growing teams and larger contact lists</li>
+                </ul>
+            </section>
+        </div>
     </div>
 </div>
 

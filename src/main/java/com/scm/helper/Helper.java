@@ -6,6 +6,31 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
 public class Helper {
 
+    public static String normalizeUrl(String rawValue) {
+        if (rawValue == null) {
+            return "";
+        }
+
+        String trimmed = rawValue.trim();
+        if (trimmed.isEmpty()) {
+            return "";
+        }
+
+        if (trimmed.matches("^[a-zA-Z][a-zA-Z0-9+.-]*:.*")) {
+            return trimmed;
+        }
+
+        if (trimmed.startsWith("www.")) {
+            return "https://" + trimmed;
+        }
+
+        if (trimmed.contains(".")) {
+            return "https://" + trimmed;
+        }
+
+        return trimmed;
+    }
+
     public static String getEmailOfLoggedInUser(Authentication authentication) {
 
         // 1. Agar OAuth2 se login hua hai (Google ya GitHub)

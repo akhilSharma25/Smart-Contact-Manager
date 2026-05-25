@@ -10,32 +10,256 @@
 
 <div id="content">
     <style>
-        .services-wrapper {
-            padding: 40px 20px;
-            max-width: 800px;
+        .about-shell {
+            padding: 32px 20px 56px;
+        }
+
+        .about-hero {
+            max-width: 1080px;
             margin: 0 auto;
-            line-height: 1.6;
+            padding: 48px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #38bdf8 100%);
+            color: #ffffff;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
         }
-        .services-wrapper h1 {
-            color: #1e293b;
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .about-hero h1 {
+            margin: 0 0 14px;
             font-size: 2.5rem;
-            margin-bottom: 10px;
+            line-height: 1.15;
         }
-        .services-wrapper h2 {
-            color: #4f46e5;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+
+        .about-hero p {
+            margin: 0;
+            max-width: 760px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.08rem;
+            line-height: 1.75;
         }
-        .services-wrapper p {
-            color: #64748b;
-            font-size: 1.1rem;
+
+        .about-stats {
+            max-width: 1080px;
+            margin: 24px auto 0;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px 18px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .stat-card .label {
+            color: #475569;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .stat-card .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .about-grid {
+            max-width: 1080px;
+            margin: 28px auto 0;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 22px;
+        }
+
+        .about-panel {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+        }
+
+        .about-panel h2 {
+            margin: 0 0 12px;
+            color: #0f172a;
+            font-size: 1.45rem;
+        }
+
+        .about-panel p,
+        .about-panel li {
+            color: #475569;
+            line-height: 1.8;
+        }
+
+        .about-panel ul {
+            padding-left: 18px;
+            margin: 14px 0 0;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .feature-item {
+            padding: 14px;
+            border-radius: 16px;
+            background: #f8fafc;
+            border: 1px solid rgba(191, 219, 254, 0.8);
+        }
+
+        .feature-item strong {
+            display: block;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .cta-strip {
+            max-width: 1080px;
+            margin: 24px auto 0;
+            padding: 24px 28px;
+            border-radius: 24px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cta-strip h3 {
+            margin: 0 0 6px;
+            color: #0f172a;
+        }
+
+        .cta-strip p {
+            margin: 0;
+            color: #334155;
+        }
+
+        .cta-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .about-stats,
+            .about-grid,
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-strip {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
-    <h1>Welcome to about page</h1>
-    <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur,
-        ratione!
-    </p>
+
+    <div class="about-shell">
+        <section class="about-hero">
+            <div class="eyebrow">About SCM 2.0</div>
+            <h1>Smart Contact Management for growing teams, sales teams, and service businesses.</h1>
+            <p>
+                SCM 2.0 is a modern contact management platform built for businesses that need to store,
+                organize, and work with customer information in one clean dashboard. From startup teams to
+                service-driven businesses, it helps you keep every contact searchable, up-to-date, and ready for action.
+            </p>
+        </section>
+
+        <div class="about-stats">
+            <article class="stat-card">
+                <div class="label">Teams onboarded</div>
+                <div class="value">250+</div>
+            </article>
+            <article class="stat-card">
+                <div class="label">Contacts organized</div>
+                <div class="value">50K+</div>
+            </article>
+            <article class="stat-card">
+                <div class="label">Search speed</div>
+                <div class="value">Instant</div>
+            </article>
+            <article class="stat-card">
+                <div class="label">Focus</div>
+                <div class="value">Productivity</div>
+            </article>
+        </div>
+
+        <div class="about-grid">
+            <section class="about-panel">
+                <h2>Built for real business workflows</h2>
+                <p>
+                    SCM 2.0 is designed for teams that manage customer details, follow-ups, and communication history on a daily basis.
+                    It gives you a simple place to save contact information, update profiles, search fast, and collaborate without
+                    losing track of important details.
+                </p>
+                <ul>
+                    <li>Centralized contact records for sales, support, and operations teams</li>
+                    <li>Quick search and filtering to find the right person in seconds</li>
+                    <li>Clean dashboard for managing business relationships in one place</li>
+                    <li>Secure and reliable platform for everyday team use</li>
+                </ul>
+            </section>
+
+            <section class="about-panel">
+                <h2>Why teams choose SCM 2.0</h2>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <strong>Simple onboarding</strong>
+                        Easy setup with a clean interface that your team can start using immediately.
+                    </div>
+                    <div class="feature-item">
+                        <strong>Search-first design</strong>
+                        Find contacts quickly using names, phone numbers, emails, and business details.
+                    </div>
+                    <div class="feature-item">
+                        <strong>Team-friendly workflow</strong>
+                        Keep customer information organized so every team member works from the same source of truth.
+                    </div>
+                    <div class="feature-item">
+                        <strong>Built for growth</strong>
+                        Designed to support expanding contact lists and more complex business operations.
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section class="cta-strip">
+            <div>
+                <h3>Ready to manage your contacts more efficiently?</h3>
+                <p>Book a demo or get in touch so we can show you how SCM 2.0 fits your team.</p>
+            </div>
+            <a href="/contact" class="cta-pill">Contact the team</a>
+        </section>
+    </div>
 </div>
 <script>
     console.log("about page");

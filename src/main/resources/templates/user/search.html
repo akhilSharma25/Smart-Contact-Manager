@@ -238,8 +238,24 @@
                             <td>
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <div th:if="*{favorite}" style="height: 8px; width: 8px; border-radius: 50%; background-color: #22c55e;" title="Favorite"></div>
-                                    <a th:href="*{websiteLink}" target="_blank" style="color: #4f46e5;"><i class="fa-solid fa-link"></i></a>
-                                    <a th:href="*{linkedLink}" target="_blank" style="color: #0a66c2;"><i class="fa-brands fa-linkedin"></i></a>
+                                    <a th:if="${c.websiteLink != null && !#strings.isEmpty(c.websiteLink)}"
+                                       th:href="${#strings.startsWith(c.websiteLink, 'http://') or #strings.startsWith(c.websiteLink, 'https://') ? c.websiteLink : 'https://' + c.websiteLink}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       style="color: #4f46e5;"
+                                       title="Open website">
+                                        <i class="fa-solid fa-link"></i>
+                                    </a>
+                                    <span th:if="${c.websiteLink == null || #strings.isEmpty(c.websiteLink)}" style="color: #94a3b8; font-size: 0.9rem;">No website</span>
+                                    <a th:if="${c.linkedLink != null && !#strings.isEmpty(c.linkedLink)}"
+                                       th:href="${#strings.startsWith(c.linkedLink, 'http://') or #strings.startsWith(c.linkedLink, 'https://') ? c.linkedLink : 'https://' + c.linkedLink}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       style="color: #0a66c2;"
+                                       title="Open LinkedIn">
+                                        <i class="fa-brands fa-linkedin"></i>
+                                    </a>
+                                    <span th:if="${c.linkedLink == null || #strings.isEmpty(c.linkedLink)}" style="color: #94a3b8; font-size: 0.9rem;">No LinkedIn</span>
                                 </div>
                             </td>
                             <td>
@@ -292,59 +308,28 @@
 <script th:fragment="script">
     console.log("Local Script Core Parsed Successfully inside Search Frame");
 
-    const viewContactModal = document.getElementById("view_contact_modal");
-
-    const options = {
-        placement: "bottom-right",
-        backdrop: "dynamic",
-        backdropClasses: "bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40",
-        closable: true,
-        onShow: () => {
-            setTimeout(() => {
-                if(viewContactModal) viewContactModal.classList.add("scale-100");
-            }, 50);
-        }
-    };
-
-    const instanceOptions = { id: "view_contact_modal", override: true };
-
-    let contactModal;
-    if (typeof Modal !== 'undefined' && viewContactModal) {
-        contactModal = new Modal(viewContactModal, options, instanceOptions);
-    }
-
-    function openContactModal() { if(contactModal) contactModal.show(); }
-    function closeContactModal() { if(contactModal) contactModal.hide(); }
-
     async function loadContactdata(id) {
         console.log("Analyzing dynamic payloads for key index:", id);
         try {
-            const response = await fetch(`/api/contacts/${id}`);
+            const response = await fetch(`/user/contacts/modal/${id}`);
             const data = await response.json();
 
-            document.querySelector("#contact_name").innerHTML = data.name;
-            document.querySelector("#contact_email").innerHTML = data.email;
+            document.querySelector("#contact_name").innerText = data.name || "N/A";
+            document.querySelector("#contact_email").innerText = data.email || "N/A";
             document.querySelector("#contact_image").src = data.picture ? data.picture : 'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png';
-            document.querySelector("#contact_address").innerHTML = data.address;
-            document.querySelector("#contact_phone").innerHTML = data.phoneNumber;
-            document.querySelector("#contact_about").innerHTML = data.description ? data.description : "No descriptive profile listed.";
+            document.querySelector("#contact_address").innerText = data.address || "No address added";
+            document.querySelector("#contact_phone").innerText = data.phoneNumber || "N/A";
+            document.querySelector("#contact_description").innerText = data.description || "No description added";
 
             const contactFavorite = document.querySelector("#contact_favorite");
             if (data.favorite) {
-                contactFavorite.innerHTML = "<i class='fas fa-star text-yellow-400'></i> Favorite Profile Check";
+                contactFavorite.innerText = "Favorite Contact";
             } else {
-                contactFavorite.innerHTML = "Standard Priority Contact";
+                contactFavorite.innerText = "Not Favorite";
             }
 
-            document.querySelector("#contact_website").href = data.websiteLink;
-            document.querySelector("#contact_website").innerHTML = data.websiteLink ? data.websiteLink : "N/A";
-
-            // FIX: Modal dynamic selectors matched with response variables
-            const linkedInEl = document.querySelector("#contact_linkedIn");
-            if(linkedInEl) {
-                linkedInEl.href = data.linkedLink;
-                linkedInEl.innerHTML = data.linkedLink ? data.linkedLink : "N/A";
-            }
+            setLinkElement(document.querySelector("#contact_website"), data.websiteLink, "No website");
+            setLinkElement(document.querySelector("#contact_linkedin"), data.linkedLink, "No LinkedIn link");
 
             openContactModal();
         } catch (error) {

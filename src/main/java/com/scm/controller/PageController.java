@@ -8,8 +8,9 @@ import com.scm.repo.UserRepo;
 import com.scm.services.impl.UserServiceIml;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,21 +31,17 @@ public class PageController {
         return "redirect:/home";
     }
     @GetMapping("/home")
-    public  String home(Model model, Authentication authentication){
-        model.addAttribute("name","Substring Technologies");
-        model.addAttribute("city","Delhi");
-        
-        // Pass actual logged-in user status
-        boolean isLoggedIn = authentication != null && authentication.isAuthenticated();
-        if (authentication != null && authentication.isAuthenticated()) {
+    public String home(Model model, Authentication authentication) {
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            return "redirect:/user/contacts";
+        }
 
-            String username = authentication.getName();
-            // Database se pura User object dhoondho
-            User user = repo.findByEmail(username).orElse(null);
-            model.addAttribute("loggedInUser", user);
-        } else {
-            model.addAttribute("loggedInUser", null);
-        }        return "home";
+        model.addAttribute("name", "Substring Technologies");
+        model.addAttribute("city", "Delhi");
+        model.addAttribute("loggedInUser", null);
+        return "home";
     }
 
     @RequestMapping("/about")

@@ -71,6 +71,28 @@
             display: inline-block;
             width: 110px;
             color: #0f172a;
+            vertical-align: top;
+        }
+        .modal-item span,
+        .modal-item a {
+            display: inline-block;
+            max-width: calc(100% - 125px);
+            word-break: break-word;
+        }
+        .modal-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: #ecfdf5;
+            color: #047857;
+        }
+        .modal-status-pill.unmarked {
+            background: #f3f4f6;
+            color: #475569;
         }
     </style>
 
@@ -84,7 +106,11 @@
             <div class="modal-item"><strong>Name:</strong> <span id="contact_name">Loading...</span></div>
             <div class="modal-item"><strong>Email:</strong> <span id="contact_email">Loading...</span></div>
             <div class="modal-item"><strong>Phone:</strong> <span id="contact_phone">Loading...</span></div>
+            <div class="modal-item"><strong>Address:</strong> <span id="contact_address">No address added</span></div>
+            <div class="modal-item"><strong>Description:</strong> <span id="contact_description">No description added</span></div>
             <div class="modal-item"><strong>Website:</strong> <a id="contact_website" href="#" target="_blank">No website</a></div>
+            <div class="modal-item"><strong>LinkedIn:</strong> <a id="contact_linkedin" href="#" target="_blank">No LinkedIn link</a></div>
+            <div class="modal-item"><strong>Status:</strong> <span id="contact_favorite" class="modal-status-pill">Unknown</span></div>
         </div>
     </div>
         <script th:inline="javascript">
@@ -94,6 +120,53 @@
 
             function closeContactModal() {
                 document.getElementById("view_contact_modal").classList.remove("open");
+            }
+
+            function normalizeUrl(value) {
+                if (!value || value.trim() === '') {
+                    return '';
+                }
+
+                const trimmed = value.trim();
+                if (/^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)) {
+                    return trimmed;
+                }
+
+                if (/^www\./i.test(trimmed)) {
+                    return `https://${trimmed}`;
+                }
+
+                if (/^[^\s]+\.[^\s]+$/i.test(trimmed)) {
+                    return `https://${trimmed}`;
+                }
+
+                return trimmed;
+            }
+
+            function setLinkElement(element, value, fallbackText) {
+                const normalizedUrl = normalizeUrl(value);
+
+                if (!normalizedUrl) {
+                    element.href = '#';
+                    element.innerText = fallbackText;
+                    element.removeAttribute('title');
+                    return;
+                }
+
+                element.href = normalizedUrl;
+                element.innerText = normalizedUrl;
+                element.title = normalizedUrl;
+            }
+
+            function setFavoriteBadge(value) {
+                const badge = document.getElementById('contact_favorite');
+                if (value) {
+                    badge.className = 'modal-status-pill';
+                    badge.innerText = 'Favorite Contact';
+                } else {
+                    badge.className = 'modal-status-pill unmarked';
+                    badge.innerText = 'Not Favorite';
+                }
             }
         </script>
     </div>
